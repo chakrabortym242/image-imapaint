@@ -1,0 +1,28 @@
+import cv2 as cv
+import matplotlib.pyplot as plt
+#reading the damaged image
+damaged_im=cv.imread('dm1.jpg')
+
+#creating a mask of the image
+img2=cv.imread('masked.jpg',cv.IMREAD_COLOR)
+gray_im=cv.cvtColor(damaged_im, cv.COLOR_BGR2GRAY)
+ret,mask=cv.threshold(gray_im,150,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
+mask=cv.adaptiveThreshold(mask, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY, 115, 1)
+
+cv.imwrite('masked.jpg',mask)
+
+
+# mask1 is the binary image created
+# mask2 is the mask created from the binary image
+
+mask1=cv.imread('masked.jpg',0) #reading the masked image
+mask2=cv.imread('masked2.jpg',0) # reading the manually created mask 
+output1=cv.inpaint(damaged_im,mask1,5,cv.INPAINT_TELEA)
+output2=cv.inpaint(damaged_im,mask1,5,cv.INPAINT_NS)
+cv.imshow('impaint_telea',output1) #not a good output
+cv.imshow('impaint2_ns',output2) #comparatively good
+cv.imshow('damaged image',damaged_im)
+cv.imshow('mask image',mask1)
+#cv.imshow('mask_image_manual',mask2)
+cv.waitKey(0)
+cv.destroyAllWindows()
